@@ -1,44 +1,29 @@
-let paises = [];
+const contenedor = document.getElementById("contenedorPaises");
 
-const buscarInput = document.getElementById('buscar');
-const resultadoDiv = document.getElementById('resultado');
-const contenedorPaises = document.getElementById('contenedorPaises');
+fetch("https://restcountries.com/v3.1/all")
+  .then((respuesta) => {
+    return respuesta.json();
+  })
+  .then((paises) => {
+    paises.forEach((pais) => {
+      const div = document.createElement("div");
+      div.classList.add("card");
 
-// Obtener datos de la API
-fetch('https://restcountries.com/v3.1/all')
-    .then(res => res.json())
-    .then(data => {
-        paises = data;
-        mostrarPaises(paises);
-    })
-    .catch(error => {
-        resultadoDiv.textContent = 'Error al cargar los países.';
+      const nombre = pais.name?.official || "Sin nombre";
+      const bandera = pais.flags?.png || "";
+      const region = pais.region || "Desconocida";
+      const poblacion = pais.population?.toLocaleString() || "Desconocida";
+
+      div.innerHTML = `
+  <img src="${bandera}" alt="Bandera de ${nombre}">
+  <div class="nombre-pais"><strong>${nombre}</strong></div>
+  <p>Región: ${region}</p>
+  <p>Población: ${poblacion}</p>
+`;
+
+      contenedor.appendChild(div);
     });
-
-// Mostrar países en el DOM
-function mostrarPaises(lista) {
-    contenedorPaises.innerHTML = '';
-    resultadoDiv.textContent = `Resultados: ${lista.length}`;
-    lista.forEach(pais => {
-        const div = document.createElement('div');
-        div.className = 'pais';
-        div.innerHTML = `
-            <img src="${pais.flags.svg}" alt="Bandera de ${pais.name.official}">
-            <div>
-                <strong>${pais.name.official}</strong><br>
-                Región: ${pais.region}<br>
-                Población: ${pais.population.toLocaleString()}
-            </div>
-        `;
-        contenedorPaises.appendChild(div);
-    });
-}
-
-// Filtrar países por nombre
-buscarInput.addEventListener('input', function() {
-    const texto = buscarInput.value.toLowerCase();
-    const filtrados = paises.filter(pais =>
-        pais.name.official.toLowerCase().includes(texto)
-    );
-    mostrarPaises(filtrados);
-});
+  })
+  .catch((error) => {
+    console.error("Error al hacer la petición", error);
+  });
