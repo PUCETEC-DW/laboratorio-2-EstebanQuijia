@@ -1,5 +1,5 @@
 {
-  "homepage": "",
+  "homepage": " https://estebanquijia.github.io/laboratorio-2-EstebanQuijia/",
   "scripts": {
     "deploy": "gh-pages -d src"
   },
